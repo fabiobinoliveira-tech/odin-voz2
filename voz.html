@@ -327,16 +327,37 @@ function enviarParaODIN(texto){
 
 function voltarODIN(){
 
-  if(window.opener){
+  // Se a página foi aberta em uma nova janela/aba pelo ODIN
+  if(window.opener && !window.opener.closed){
 
     try{
       window.opener.focus();
+      window.close();
+      return;
     }catch(e){}
 
   }
 
-}
+  // Se o usuário chegou aqui navegando a partir do ODIN
+  if(document.referrer){
 
+    window.location.href = document.referrer;
+    return;
+
+  }
+
+  // Último recurso: voltar no histórico do navegador
+  if(window.history.length > 1){
+
+    window.history.back();
+    return;
+
+  }
+
+  // Caso não exista página anterior
+  alert('Não foi possível localizar o painel do ODIN.');
+
+}
 </script>
 
 </body>

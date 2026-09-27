@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover">
 
 <title>ODIN CONTROL — Voz</title>
 
 <style>
+
 *{
   box-sizing:border-box;
   -webkit-tap-highlight-color:transparent;
@@ -16,12 +20,20 @@
 body{
   margin:0;
   min-height:100vh;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   background:#0b0d10;
   color:#f5f5f5;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
   padding:24px;
 }
 
@@ -34,12 +46,16 @@ body{
 .logo{
   width:90px;
   height:90px;
+
   margin:0 auto 22px;
+
   border:1px solid #555;
   border-radius:50%;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   font-size:42px;
 }
 
@@ -57,12 +73,16 @@ p{
 button{
   width:100%;
   min-height:62px;
+
   border:0;
   border-radius:18px;
+
   background:#f1f1f1;
   color:#111;
+
   font-size:18px;
   font-weight:700;
+
   cursor:pointer;
 }
 
@@ -74,6 +94,7 @@ button.ouvindo{
 .status{
   margin-top:22px;
   min-height:50px;
+
   color:#aaa;
   line-height:1.4;
 }
@@ -81,49 +102,86 @@ button.ouvindo{
 .transcricao{
   margin-top:20px;
   padding:18px;
+
   border-radius:16px;
+
   background:#15181d;
+
   min-height:80px;
+
   text-align:left;
   word-break:break-word;
+
   color:#fff;
 }
 
 .voltar{
   display:block;
+
   margin-top:22px;
+
   color:#aaa;
+
   text-decoration:none;
+
+  cursor:pointer;
 }
+
+.voltar:active{
+  opacity:0.7;
+}
+
 </style>
+
 </head>
 
 <body>
 
 <div class="container">
 
-  <div class="logo">◉</div>
+  <div class="logo">
+    ◉
+  </div>
 
-  <h1>ODIN CONTROL</h1>
+  <h1>
+    ODIN CONTROL
+  </h1>
 
   <p>
     Fale seu comando financeiro naturalmente.
   </p>
 
-  <button id="btnVoz" onclick="iniciarVoz()">
+  <button
+    id="btnVoz"
+    type="button"
+    onclick="iniciarVoz()">
+
     🎙 Falar com ODIN
+
   </button>
 
-  <div id="status" class="status">
+  <div
+    id="status"
+    class="status">
+
     Toque no botão e fale.
+
   </div>
 
-  <div id="transcricao" class="transcricao">
+  <div
+    id="transcricao"
+    class="transcricao">
+
     Aguardando comando...
+
   </div>
 
-  <a href="#" class="voltar" onclick="voltarODIN();return false;">
+  <a
+    href="https://script.google.com/macros/s/AKfycbx9s_8qRcc-CLEmC2aCUsvRbGDbsswHJKseMZp2Bis24aBVyteJCPz8lpAzVWwJogD4/exec"
+    class="voltar">
+
     ← Voltar para o ODIN
+
   </a>
 
 </div>
@@ -131,23 +189,38 @@ button.ouvindo{
 <script>
 
 let reconhecimento = null;
+
 let ouvindo = false;
+
 let textoFinal = '';
 
-const btn = document.getElementById('btnVoz');
-const status = document.getElementById('status');
-const transcricao = document.getElementById('transcricao');
+const btn =
+  document.getElementById('btnVoz');
+
+const status =
+  document.getElementById('status');
+
+const transcricao =
+  document.getElementById('transcricao');
+
+
+/* =====================================================
+   INICIAR VOZ
+===================================================== */
 
 function iniciarVoz(){
 
   if(ouvindo){
+
     pararVoz();
+
     return;
   }
 
   const SR =
     window.SpeechRecognition ||
     window.webkitSpeechRecognition;
+
 
   if(!SR){
 
@@ -157,181 +230,340 @@ function iniciarVoz(){
     return;
   }
 
+
   try{
 
     reconhecimento = new SR();
 
-    reconhecimento.lang = 'pt-BR';
-    reconhecimento.continuous = false;
-    reconhecimento.interimResults = true;
-    reconhecimento.maxAlternatives = 1;
+    reconhecimento.lang =
+      'pt-BR';
+
+    reconhecimento.continuous =
+      false;
+
+    reconhecimento.interimResults =
+      true;
+
+    reconhecimento.maxAlternatives =
+      1;
+
 
     textoFinal = '';
+
     ouvindo = true;
 
-    btn.classList.add('ouvindo');
-    btn.textContent = '■ Parar de ouvir';
+
+    btn.classList.add(
+      'ouvindo'
+    );
+
+    btn.textContent =
+      '■ Parar de ouvir';
+
 
     status.textContent =
       'Ouvindo… fale seu comando agora.';
 
-    transcricao.textContent = '';
 
-    reconhecimento.onresult = function(event){
+    transcricao.textContent =
+      'Ouvindo...';
 
-      let parcial = '';
 
-      for(
-        let i = event.resultIndex;
-        i < event.results.length;
-        i++
-      ){
+    /* =================================================
+       RESULTADO DA VOZ
+    ================================================= */
 
-        const texto =
-          event.results[i][0].transcript;
+    reconhecimento.onresult =
+      function(event){
 
-        if(event.results[i].isFinal){
+        let parcial = '';
 
-          textoFinal += texto + ' ';
 
-        }else{
+        for(
+          let i = event.resultIndex;
+          i < event.results.length;
+          i++
+        ){
 
-          parcial += texto;
+          const texto =
+            event.results[i][0].transcript;
+
+
+          if(
+            event.results[i].isFinal
+          ){
+
+            textoFinal +=
+              texto + ' ';
+
+          }else{
+
+            parcial +=
+              texto;
+
+          }
 
         }
-      }
 
-      const resultado =
-        (textoFinal + parcial).trim();
 
-      transcricao.textContent =
-        resultado || 'Ouvindo...';
-    };
+        const resultado =
+          (
+            textoFinal +
+            parcial
+          ).trim();
 
-    reconhecimento.onerror = function(event){
 
-      ouvindo = false;
+        transcricao.textContent =
+          resultado ||
+          'Ouvindo...';
 
-      btn.classList.remove('ouvindo');
-      btn.textContent = '🎙 Falar com ODIN';
+      };
 
-      if(event.error === 'not-allowed'){
 
-        status.textContent =
-          'O acesso ao microfone foi bloqueado. Autorize o microfone para esta página.';
+    /* =================================================
+       ERRO
+    ================================================= */
 
-      }else if(event.error === 'no-speech'){
+    reconhecimento.onerror =
+      function(event){
 
-        status.textContent =
-          'Nenhuma fala foi detectada. Tente novamente.';
+        ouvindo = false;
 
-      }else{
 
-        status.textContent =
-          'Não foi possível capturar a voz. Tente novamente.';
-      }
+        btn.classList.remove(
+          'ouvindo'
+        );
 
-    };
+        btn.textContent =
+          '🎙 Falar com ODIN';
 
-    reconhecimento.onend = function(){
 
-      ouvindo = false;
+        if(
+          event.error ===
+          'not-allowed'
+        ){
 
-      btn.classList.remove('ouvindo');
-      btn.textContent = '🎙 Falar com ODIN';
+          status.textContent =
+            'O acesso ao microfone foi bloqueado. Autorize o microfone para esta página.';
 
-      const texto =
-        textoFinal.trim();
+        }
 
-      if(texto){
+        else if(
+          event.error ===
+          'no-speech'
+        ){
 
-        status.textContent =
-          'Comando capturado. Enviando para o ODIN…';
+          status.textContent =
+            'Nenhuma fala foi detectada. Tente novamente.';
 
-        enviarParaODIN(texto);
+        }
 
-      }else{
+        else{
 
-        status.textContent =
-          'Nenhum comando foi capturado.';
-      }
+          status.textContent =
+            'Não foi possível capturar a voz. Tente novamente.';
 
-      reconhecimento = null;
-    };
+        }
+
+      };
+
+
+    /* =================================================
+       FIM DO RECONHECIMENTO
+    ================================================= */
+
+    reconhecimento.onend =
+      function(){
+
+        ouvindo = false;
+
+
+        btn.classList.remove(
+          'ouvindo'
+        );
+
+        btn.textContent =
+          '🎙 Falar com ODIN';
+
+
+        const texto =
+          textoFinal.trim();
+
+
+        if(texto){
+
+          status.textContent =
+            'Comando capturado. Enviando para o ODIN…';
+
+
+          enviarParaODIN(
+            texto
+          );
+
+        }
+
+        else{
+
+          status.textContent =
+            'Nenhum comando foi capturado.';
+
+        }
+
+
+        reconhecimento =
+          null;
+
+      };
+
+
+    /* =================================================
+       INICIAR MICROFONE
+    ================================================= */
 
     reconhecimento.start();
 
-  }catch(error){
+
+  }
+
+  catch(error){
 
     ouvindo = false;
 
-    btn.classList.remove('ouvindo');
-    btn.textContent = '🎙 Falar com ODIN';
+
+    btn.classList.remove(
+      'ouvindo'
+    );
+
+    btn.textContent =
+      '🎙 Falar com ODIN';
+
 
     status.textContent =
       'O navegador não conseguiu iniciar o microfone.';
+
   }
+
 }
 
+
+/* =====================================================
+   PARAR VOZ
+===================================================== */
 
 function pararVoz(){
 
   if(reconhecimento){
 
     try{
+
       reconhecimento.stop();
-    }catch(e){}
+
+    }
+
+    catch(e){}
 
   }
+
 
   ouvindo = false;
 
-  btn.classList.remove('ouvindo');
-  btn.textContent = '🎙 Falar com ODIN';
-}
 
-
-function enviarParaODIN(texto){
-
-  if(!window.opener){
-
-    status.textContent =
-      'O ODIN CONTROL não está aberto. Volte ao painel e tente novamente.';
-
-    return;
-  }
-
-  window.opener.postMessage(
-    {
-      type:'ODIN_VOICE_RESULT',
-      text:texto
-    },
-    '*'
+  btn.classList.remove(
+    'ouvindo'
   );
 
-  status.textContent =
-    'Registrado no ODIN.';
 
-  transcricao.textContent =
-    texto;
+  btn.textContent =
+    '🎙 Falar com ODIN';
 
-  setTimeout(function(){
+}
+
+
+/* =====================================================
+   ENVIAR PARA ODIN
+===================================================== */
+
+function enviarParaODIN(
+  texto
+){
+
+  /*
+   * Quando o ODIN abrir esta página
+   * através de window.open(), o Safari
+   * mantém window.opener.
+   */
+
+  if(
+    window.opener &&
+    !window.opener.closed
+  ){
 
     try{
-      window.close();
-    }catch(e){}
 
-  },700);
+      window.opener.postMessage(
+
+        {
+          type:
+            'ODIN_VOICE_RESULT',
+
+          text:
+            texto
+        },
+
+        '*'
+
+      );
+
+
+      status.textContent =
+        'Registrado no ODIN.';
+
+
+      transcricao.textContent =
+        texto;
+
+
+      /*
+       * Não usamos window.close().
+       *
+       * O Safari pode impedir o fechamento
+       * de abas/janelas abertas dessa maneira.
+       */
+
+      return;
+
+    }
+
+    catch(error){
+
+      status.textContent =
+        'O comando foi capturado, mas não foi possível comunicar com o ODIN.';
+
+      return;
+
+    }
+
+  }
+
+
+  /*
+   * Se o usuário abriu voz.html diretamente,
+   * não existe janela ODIN para receber
+   * o postMessage.
+   */
+
+  status.textContent =
+    'Comando capturado. Abra o Falar com ODIN pelo painel principal.';
+
 }
 
 
-function voltarODIN(){
+/* =====================================================
+   FIM
+===================================================== */
 
-  window.location.href =
-    'https://script.google.com/macros/s/AKfycbx9s_8qRcc-CLEmC2aCUsvRbGDbsswHJKseMZp2Bis24aBVyteJCPz8lpAzVWwJogD4/exec';
-
-}
 </script>
 
 </body>
+
 </html>
